@@ -1,4 +1,5 @@
 from models.log import Log
+from models.process import ProcessSpec
 
 def start_new_project(log_reg):
     print("Starting new project")
@@ -8,12 +9,10 @@ def start_new_project(log_reg):
     log_reg.add_log(
             kind="user_prompt",
             sender= "user",
-            send_to= "agent_1",
+            process= ProcessSpec.INGEST,
             context= {
                 "prompt" : text
             },
-            generate_task= True,
-            task= "ingest"
         )
 
 def Run(log_reg):
@@ -21,9 +20,8 @@ def Run(log_reg):
     while True:
         if last_log == "":
             start_new_project(log_reg)
-        
-        last_log = log_reg.logs[-1]
-        if last_log.generate_task == True:
-            print("task")
+            print(log_reg)
             break
+        
+        
 

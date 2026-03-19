@@ -7,7 +7,7 @@ if __name__ == "__main__":
     # start log registry
     log_reg = LogRegistry()
 
-    Run(log_reg)
+Run(log_reg)
 
         
 

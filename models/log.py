@@ -1,28 +1,33 @@
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from uuid import uuid4
 
+from models.process import ProcessSpec, ProcessConfig
 
 class Log(BaseModel):
     log_id:     str = Field(default_factory=lambda: f"log_{uuid4()}")
     kind:       str
     sender:     str
-    send_to:    str
+    process:    ProcessConfig
+    send_to:    str = Field(default="None") 
     context:    dict = Field(default= {}) 
-    generate_task : bool = Field(default=False)
-    task: str = Field(default="")
+
+    @model_validator(mode='after')
+    def set_send_to(self) -> 'Log':
+        if self.send_to is "None":
+            self.send_to = self.process.agent_role
+        return self
+
 
 if __name__ == "__main__":
       l =Log(
             kind= "test",
             sender= "user",
-            send_to= "test",
+            process= ProcessSpec.INGEST,
             context={
                   "text" : "this is a test"
-            },
-            generate_task=True
-            
+            },            
       )
       
       print(l.model_dump_json(indent=4))
